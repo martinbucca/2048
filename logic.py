@@ -79,11 +79,6 @@ def transpose_board(board):
 
 
 
-def left_move(board):
-    moved_board = board.copy()
-    for i in range(ROWS):
-        moved_board[i] = combine_line(moved_board[i])
-    return moved_board
 
 
 
@@ -107,42 +102,46 @@ def combine_line(line):
     return result
 
 
-def up_move(board):
+def move_left(board):
+    moved_board = board.copy()
+    for i in range(ROWS):
+        moved_board[i] = combine_line(moved_board[i])
+    return moved_board
+
+
+
+def move_up(board):
     transposed_board = transpose_board(board)
-    moved_board = left_move(transposed_board)
+    moved_board = move_left(transposed_board)
     return transpose_board(moved_board)
 
-def down_move(board):
+def move_down(board):
     transposed_board = transpose_board(board)
-    moved_board = right_move(transposed_board)
+    moved_board = move_right(transposed_board)
     return transpose_board(moved_board)
 
-def right_move(board):
+def move_right(board):
     inverted_board = invert_board(board)
-    moved_board = left_move(inverted_board)
+    moved_board = move_left(inverted_board)
     return invert_board(moved_board)
 
 def update_game(board, direction):
     '''Updates the game according to the specified movement in the desired direction to move the board.'''
     if direction == UP:
-        return up_move(board)
+        return move_up(board)
     elif direction == DOWN:
-        return down_move(board)
+        return move_down(board)
     elif direction == LEFT:
-        return left_move(board)
+        return move_left(board)
     elif direction == RIGHT:
-        return right_move(board)
+        return move_right(board)
+
 
 
 def get_random_empty_cell(board):
-    empty_cells = []
-    for i in range(ROWS):
-        for j in range(COLUMNS):
-            if board[i][j] == EMPTY:
-                empty_cells.append((i, j))
-    if not empty_cells:
-        return False
-    return random.choice(empty_cells)
+    empty_cells = [(i, j) for i in range(ROWS) for j in range(COLUMNS) if board[i][j] == EMPTY]
+    return random.choice(empty_cells) if empty_cells else False
+
 
 
 
