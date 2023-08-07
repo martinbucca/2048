@@ -20,10 +20,10 @@ class Game:
         gamelib.draw_text(str(self.score), SCORE_POSITION[0], SCORE_POSITION[1], size=30, fill="white")
         for i in range(len(self.board)):
             for j in range(len(self.board)):
-                x1, y1 = BOARD_X_MARGIN + j * CELL_SIZE, BOARD_Y_MARGIN + i * CELL_SIZE
+                x1, y1 = BOARD_X_MARGIN + j * CELL_SIZE + 2 * j, BOARD_Y_MARGIN + i * CELL_SIZE + 2 * i
                 x2, y2 = x1 + CELL_SIZE, y1 + CELL_SIZE
                 value = self.board[i][j]
-                gamelib.draw_rectangle(x1, y1, x2, y2, fill=COLORS.get(value, DEFAULT_CELL_COLOR))
+                gamelib.draw_rectangle(x1, y1, x2, y2, fill=COLORS.get(value, DEFAULT_CELL_COLOR), outline=COLORS.get(value, DEFAULT_CELL_COLOR))
                 if value != EMPTY:
                     gamelib.draw_text(str(value), (x1 + x2) / 2, (y1 + y2) / 2, fill=NUMBERS_COLOR)
     def get_random_empty_cell(self):
@@ -129,9 +129,16 @@ class Game:
         '''
         Returns True if the game is lost, False otherwise.
         '''
-        if not self.possible_horizontal_moves() and not self.possible_horizontal_moves(self.transpose_board()):
+        if not self.possible_horizontal_moves() and not self.possible_vertical_moves():
             return True
         return False
+    def possible_vertical_moves(self):
+        '''
+        Returns True if there are vertical moves possible, False otherwise.
+        '''
+        result =  self.possible_horizontal_moves(self.transpose_board())
+        self.transpose_board()
+        return result
     def possible_horizontal_moves(self):
         '''
         Returns True if there are horizontal moves possible, False otherwise.
