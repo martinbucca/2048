@@ -103,6 +103,9 @@ def combine_line(line):
 
 
 def move_left(board):
+    '''
+    Moves the board to the left, combining the numbers that can be combined and moving them to the left.
+    '''
     moved_board = board.copy()
     for i in range(ROWS):
         moved_board[i] = combine_line(moved_board[i])
@@ -111,16 +114,25 @@ def move_left(board):
 
 
 def move_up(board):
+    '''
+    Moves the board to the up, combining the numbers that can be combined and moving them to the up.
+    '''
     transposed_board = transpose_board(board)
     moved_board = move_left(transposed_board)
     return transpose_board(moved_board)
 
 def move_down(board):
+    '''
+    Moves the board to the down, combining the numbers that can be combined and moving them to the down.
+    '''
     transposed_board = transpose_board(board)
     moved_board = move_right(transposed_board)
     return transpose_board(moved_board)
 
 def move_right(board):
+    '''
+    Moves the board to the right, combining the numbers that can be combined and moving them to the right.
+    '''
     inverted_board = invert_board(board)
     moved_board = move_left(inverted_board)
     return invert_board(moved_board)
@@ -151,6 +163,9 @@ def get_random_empty_cell(board):
 
 
 def insert_random_new_cell(board):
+    '''
+    Inserts a new cell with a value from the possible initial values in a random empty cell of the board.
+    '''
     row, column = (get_random_empty_cell(board))
     board[row][column] = random.choice(POSSIBLE_INITIAL_VALUES)
     return board
