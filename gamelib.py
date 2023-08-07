@@ -36,7 +36,7 @@ class _TkWindow(tk.Tk):
 
         self.assets = {}
 
-        self.canvas = tk.Canvas(background='black')
+        self.canvas = tk.Canvas(background="black")
         self.canvas.grid(column=0, row=0, sticky="nwes")
 
         for event_type in EventType:
@@ -54,7 +54,7 @@ class _TkWindow(tk.Tk):
 
     def notify(self):
         if not self.closed:
-            self.event_generate('<<notify>>', when='tail')
+            self.event_generate("<<notify>>", when="tail")
 
     def process_commands(self, *args):
         _TkWindow.busy_count += 1
@@ -81,33 +81,35 @@ class _TkWindow(tk.Tk):
         self.canvas.delete("all")
 
     def icon(self, path):
-        self.tk.call('wm', 'iconphoto', self._w, self.get_image(path))
+        self.tk.call("wm", "iconphoto", self._w, self.get_image(path))
 
     def draw_image(self, path, x, y):
-        self.canvas.create_image(x, y, anchor='nw', image=self.get_image(path))
+        self.canvas.create_image(x, y, anchor="nw", image=self.get_image(path))
 
     def draw(self, type, args, kwargs):
-        options = {'fill': 'white'}
+        options = {"fill": "white"}
         options.update(kwargs)
-        getattr(self.canvas, f'create_{type}')(*args, **options)
+        getattr(self.canvas, f"create_{type}")(*args, **options)
 
     def draw_text(self, text, x, y, font, size, bold, italic, kwargs):
-        options = {'fill': 'white'}
+        options = {"fill": "white"}
         options.update(kwargs)
-        self.canvas.create_text(x, y, text=text, font=self.get_font(
-            font, size, bold, italic), **options)
+        self.canvas.create_text(
+            x, y, text=text, font=self.get_font(font, size, bold, italic), **options
+        )
 
     def get_font(self, family, size, bold, italic):
-        weight = 'normal'
+        weight = "normal"
         if bold:
-            weight = 'bold'
-        slant = 'roman'
+            weight = "bold"
+        slant = "roman"
         if italic:
-            slant = 'italic'
-        name = f'font-{family}-{size}-{weight}-{slant}'
+            slant = "italic"
+        name = f"font-{family}-{size}-{weight}-{slant}"
         if name not in self.assets:
             self.assets[name] = Font(
-                family=family, size=size, weight=weight, slant=slant)
+                family=family, size=size, weight=weight, slant=slant
+            )
         return self.assets[name]
 
     def get_image(self, path):
@@ -132,7 +134,9 @@ def check_image_format(path):
     ext = path[-4:].lower()
     supported = (".gif", ".ppm", ".pgm", ".pbm")
     if ext not in supported:
-        print(f"{path}: Warning: image format {ext} is not supported and may not work properly on some platforms (Windows/Mac/Linux).")
+        print(
+            f"{path}: Warning: image format {ext} is not supported and may not work properly on some platforms (Windows/Mac/Linux)."
+        )
         print(f"Please use one of: {supported}.")
 
 
@@ -140,7 +144,9 @@ def check_audio_format(path):
     "Produce a warning message if the audio format is not supported"
     ext = path[-4:].lower()
     if ext != ".wav":
-        print(f"{path}: Warning: audio format {ext} is not supported and may not work properly on some platforms (Windows/Mac/Linux).")
+        print(
+            f"{path}: Warning: audio format {ext} is not supported and may not work properly on some platforms (Windows/Mac/Linux)."
+        )
         print(f"Please use WAV.")
 
 
@@ -157,57 +163,58 @@ def _audio_init():
 
         def winCommand(*command):
             buf = c_buffer(255)
-            command = ' '.join(command).encode(getfilesystemencoding())
+            command = " ".join(command).encode(getfilesystemencoding())
             errorCode = int(windll.winmm.mciSendStringA(command, buf, 254, 0))
             if errorCode:
                 errorBuffer = c_buffer(255)
                 windll.winmm.mciGetErrorStringA(errorCode, errorBuffer, 254)
-                exceptionMessage = ('\n    Error ' + str(errorCode) + ' for command:'
-                                    '\n        ' + command.decode() +
-                                    '\n    ' + errorBuffer.value.decode(getfilesystemencoding(), 'ignore'))
+                exceptionMessage = "\n    Error " + str(
+                    errorCode
+                ) + " for command:" "\n        " + command.decode() + "\n    " + errorBuffer.value.decode(
+                    getfilesystemencoding(), "ignore"
+                )
                 raise PlaysoundException(exceptionMessage)
             return buf.value
 
-        alias = 'playsound_' + str(random())
+        alias = "playsound_" + str(random())
         winCommand('open "' + sound + '" alias', alias)
-        winCommand('set', alias, 'time format milliseconds')
-        durationInMS = winCommand('status', alias, 'length')
-        winCommand('play', alias, 'from 0 to', durationInMS.decode())
+        winCommand("set", alias, "time format milliseconds")
+        durationInMS = winCommand("status", alias, "length")
+        winCommand("play", alias, "from 0 to", durationInMS.decode())
 
     def _playsoundOSX(sound):
         from AppKit import NSSound
         from Foundation import NSURL
 
-        if '://' not in sound:
-            if not sound.startswith('/'):
-                sound = os.getcwd() + '/' + sound
-            sound = 'file://' + sound
+        if "://" not in sound:
+            if not sound.startswith("/"):
+                sound = os.getcwd() + "/" + sound
+            sound = "file://" + sound
         url = NSURL.URLWithString_(sound)
         nssound = NSSound.alloc().initWithContentsOfURL_byReference_(url, True)
         if not nssound:
-            raise IOError('Unable to load sound named: ' + sound)
+            raise IOError("Unable to load sound named: " + sound)
         nssound.play()
 
     def _playsoundNix(sound):
         from urllib.request import pathname2url
 
         import gi
-        gi.require_version('Gst', '1.0')
+
+        gi.require_version("Gst", "1.0")
         from gi.repository import Gst
 
         Gst.init(None)
 
-        playbin = Gst.ElementFactory.make('playbin', 'playbin')
-        if sound.startswith(('http://', 'https://')):
+        playbin = Gst.ElementFactory.make("playbin", "playbin")
+        if sound.startswith(("http://", "https://")):
             playbin.props.uri = sound
         else:
-            playbin.props.uri = 'file://' + \
-                pathname2url(os.path.abspath(sound))
+            playbin.props.uri = "file://" + pathname2url(os.path.abspath(sound))
 
         set_result = playbin.set_state(Gst.State.PLAYING)
         if set_result != Gst.StateChangeReturn.ASYNC:
-            raise PlaysoundException(
-                "playbin.set_state returned " + repr(set_result))
+            raise PlaysoundException("playbin.set_state returned " + repr(set_result))
 
         bus = playbin.get_bus()
         bus.add_signal_watch()
@@ -215,9 +222,11 @@ def _audio_init():
         def on_message(bus, message):
             if message.type in (Gst.MessageType.EOS, Gst.MessageType.ERROR):
                 playbin.set_state(Gst.State.NULL)
+
         bus.connect("message", on_message)
 
     from platform import system
+
     system = system()
 
     def play_sound(sound):
@@ -235,9 +244,9 @@ def _audio_init():
         """
 
         check_audio_format(sound)
-        if system == 'Windows':
+        if system == "Windows":
             _playsoundWin(sound)
-        elif system == 'Darwin':
+        elif system == "Darwin":
             _playsoundOSX(sound)
         else:
             _playsoundNix(sound)
@@ -261,7 +270,7 @@ class _GameThread(threading.Thread):
         except Exception as e:
             sys.excepthook(*sys.exc_info())
         finally:
-            self.send_command_to_tk('close', notify=True)
+            self.send_command_to_tk("close", notify=True)
 
     def notify_tk(self):
         self.wait_for_tk()
@@ -341,7 +350,7 @@ class _GameThread(threading.Thread):
 
     def title(self, s):
         """Set the window title to `s`."""
-        self.send_command_to_tk('title', s)
+        self.send_command_to_tk("title", s)
 
     def icon(self, path):
         """
@@ -356,7 +365,7 @@ class _GameThread(threading.Thread):
             The only image formats that are supported accross all platforms (Windows/Mac/Linux)
             are GIF and PPM/PGM/PBM.
         """
-        self.send_command_to_tk('icon', path)
+        self.send_command_to_tk("icon", path)
 
     def draw_begin(self):
         """
@@ -372,7 +381,7 @@ class _GameThread(threading.Thread):
             ```
         """
         _TkWindow.idle.wait()
-        self.send_command_to_tk('clear')
+        self.send_command_to_tk("clear")
 
     def draw_image(self, path, x, y):
         """
@@ -387,9 +396,11 @@ class _GameThread(threading.Thread):
             The only image formats that are supported accross all platforms (Windows/Mac/Linux)
             are GIF and PPM/PGM/PBM.
         """
-        self.send_command_to_tk('draw_image', path, x, y)
+        self.send_command_to_tk("draw_image", path, x, y)
 
-    def draw_text(self, text, x, y, font=None, size=12, bold=False, italic=False, **options):
+    def draw_text(
+        self, text, x, y, font=None, size=12, bold=False, italic=False, **options
+    ):
         """
         Draw some `text` at coordinates `x, y` with the given properties.
 
@@ -420,8 +431,9 @@ class _GameThread(threading.Thread):
             gamelib.draw_text('Hello world!', 10, 10, fill='red', anchor='nw')
             ```
         """
-        self.send_command_to_tk('draw_text', text, x, y,
-                                font, size, bold, italic, options)
+        self.send_command_to_tk(
+            "draw_text", text, x, y, font, size, bold, italic, options
+        )
 
     def draw_arc(self, x1, y1, x2, y2, **options):
         """
@@ -436,7 +448,7 @@ class _GameThread(threading.Thread):
             gamelib.draw_arc(10, 10, 20, 20, outline='white', fill='red')
             ```
         """
-        self.send_command_to_tk('draw', 'arc', [x1, y1, x2, y2], options)
+        self.send_command_to_tk("draw", "arc", [x1, y1, x2, y2], options)
 
     def draw_line(self, x1, y1, x2, y2, **options):
         """
@@ -450,7 +462,7 @@ class _GameThread(threading.Thread):
             gamelib.draw_line(10, 10, 30, 20, fill='blue', width=2)
             ```
         """
-        self.send_command_to_tk('draw', 'line', [x1, y1, x2, y2], options)
+        self.send_command_to_tk("draw", "line", [x1, y1, x2, y2], options)
 
     def draw_oval(self, x1, y1, x2, y2, **options):
         """
@@ -464,7 +476,7 @@ class _GameThread(threading.Thread):
             gamelib.draw_oval(10, 10, 30, 20, outline='white', fill='red')
             ```
         """
-        self.send_command_to_tk('draw', 'oval', [x1, y1, x2, y2], options)
+        self.send_command_to_tk("draw", "oval", [x1, y1, x2, y2], options)
 
     def draw_polygon(self, points, **options):
         """
@@ -480,7 +492,7 @@ class _GameThread(threading.Thread):
             gamelib.draw_polygon([10, 10, 30, 20, 0, 40], outline='white', fill='red')
             ```
         """
-        self.send_command_to_tk('draw', 'polygon', points, options)
+        self.send_command_to_tk("draw", "polygon", points, options)
 
     def draw_rectangle(self, x1, y1, x2, y2, **options):
         """
@@ -494,7 +506,7 @@ class _GameThread(threading.Thread):
             gamelib.draw_rectangle(10, 10, 30, 20, outline='white', fill='red')
             ```
         """
-        self.send_command_to_tk('draw', 'rectangle', [x1, y1, x2, y2], options)
+        self.send_command_to_tk("draw", "rectangle", [x1, y1, x2, y2], options)
 
     def draw_end(self):
         """
@@ -509,16 +521,16 @@ class _GameThread(threading.Thread):
             gamelib.draw_end()
             ```
         """
-        self.send_command_to_tk('update', notify=True)
+        self.send_command_to_tk("update", notify=True)
 
     def resize(self, w, h):
         """Resize the window to be `w` pixels wide and `h` pixels tall."""
-        self.send_command_to_tk('resize', w, h)
+        self.send_command_to_tk("resize", w, h)
 
     def say(self, message):
         """Present the user with the given `message` in a dialog box with an OK button."""
         done = Queue()
-        self.send_command_to_tk('say', message, done, notify=True)
+        self.send_command_to_tk("say", message, done, notify=True)
         done.get()
 
     def input(self, prompt):
@@ -533,7 +545,7 @@ class _GameThread(threading.Thread):
             clicked on Cancel instead of OK.
         """
         response = Queue()
-        self.send_command_to_tk('input', prompt, response, notify=True)
+        self.send_command_to_tk("input", prompt, response, notify=True)
         return response.get()
 
     def is_alive(self):
@@ -635,7 +647,8 @@ def init(game_main, args=None):
         _GameThread.instance.join(1)
         if _GameThread.instance.is_alive():
             print(
-                'Killing unresponsive game thread. Make sure to call get_events() or wait() periodically.')
+                "Killing unresponsive game thread. Make sure to call get_events() or wait() periodically."
+            )
             os._exit(1)
         os._exit(0)
 
@@ -643,15 +656,15 @@ def init(game_main, args=None):
 class EventType(Enum):
     "An enumeration of the different types of `Event`s supported by gamelib."
 
-    KeyPress = 'KeyPress'
+    KeyPress = "KeyPress"
     "The user pressed a key."
-    KeyRelease = 'KeyRelease'
+    KeyRelease = "KeyRelease"
     "The user released a key."
-    Motion = 'Motion'
+    Motion = "Motion"
     "The user moved the mouse over the window."
-    ButtonPress = 'ButtonPress'
+    ButtonPress = "ButtonPress"
     "The user pressed a mouse button."
-    ButtonRelease = 'ButtonRelease'
+    ButtonRelease = "ButtonRelease"
     "The user released a mouse button."
 
 
@@ -679,11 +692,11 @@ class Event:
         self.tkevent = tkevent
 
     def __getattr__(self, k):
-        if k == 'type':
+        if k == "type":
             return EventType[self.tkevent.type.name]
-        if k == 'key':
+        if k == "key":
             return self.tkevent.keysym
-        if k == 'mouse_button':
+        if k == "mouse_button":
             return self.tkevent.num
         return getattr(self.tkevent, k)
 
@@ -691,9 +704,11 @@ class Event:
         return repr(self.tkevent)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+
     def interactive_main(_locals):
         import code
+
         code.interact(local=_locals)
 
     init(interactive_main, args=[locals()])

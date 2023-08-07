@@ -4,7 +4,7 @@ from constants import UP, DOWN, LEFT, RIGHT, BACKGROUND_COLOR
 
 
 def main():
-    gamelib.resize(800, 600)
+    gamelib.resize(600, 600)
     gamelib.title("2048")
     game = Game()
     while gamelib.is_alive():
@@ -20,5 +20,5 @@ def main():
             break
         game.update(ev.key)
 
-        
+
 gamelib.init(main)
