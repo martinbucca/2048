@@ -23,10 +23,10 @@ def show_ui(board):
     '''
     for i in range(ROWS):
         for j in range(COLUMNS):
-            x1, y1 = 200 + j * 100, 50 + i * 100
-            x2, y2 = x1 + 100, y1 + 100
+            x1, y1 = BOARD_X_MARGIN + j * CELL_SIZE, BOARD_Y_MARGIN + i * CELL_SIZE
+            x2, y2 = x1 + CELL_SIZE, y1 + CELL_SIZE
             value = board[i][j]
-            gamelib.draw_rectangle(x1, y1, x2, y2, fill=COLORS.get(value, "#cdc1b4"))
+            gamelib.draw_rectangle(x1, y1, x2, y2, fill=COLORS.get(value, DEFAULT_CELL_COLOR))
             if value != EMPTY:
                 gamelib.draw_text(str(value), (x1 + x2) / 2, (y1 + y2) / 2, fill="black")
 
@@ -63,7 +63,7 @@ def possible_moves_in_row(row):
 
 
 
-def game_won(board):
+def won_game(board):
     '''
     Returns True if the game is won, False otherwise.
     '''

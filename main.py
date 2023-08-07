@@ -1,28 +1,13 @@
 import gamelib as gamelib
 import logic
-from constants import UP, DOWN, LEFT, RIGHT
+from constants import UP, DOWN, LEFT, RIGHT, BACKGROUND_COLOR
 
-'''
-def main():
-    juego = logica.inicializar_juego()
-    while True:
-        logica.mostrar_juego(juego)
-        if logica.juego_ganado(juego):
-            print("Felicidades! Sos lo mas")
-            return
-        if logica.juego_perdido(juego):
-            print("Lola, volve a intentar")
-            return
-        dir = logica.pedir_direccion(juego)
-        nuevo_juego = logica.actualizar_juego(juego, dir)
-        if nuevo_juego != juego:
-            juego = logica.insertar_nuevo_random(nuevo_juego)
-'''
 
 def main():
-    gamelib.resize(800, 500)
+    gamelib.resize(800, 600)
     gamelib.title("2048")
-    gamelib.draw_rectangle(0, 0, 800, 500, fill="white")
+    gamelib.draw_rectangle(0, 0, 800, 600, fill=BACKGROUND_COLOR)
+    gamelib.draw_text("Score", 400, 20, size=30, fill="white")
     board = logic.initialize_2048()
     while gamelib.is_alive():
         if logic.won_game(board):
