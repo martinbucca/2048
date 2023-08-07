@@ -11,11 +11,7 @@ def initialize_2048():
     ''' 
     Initializes the game board with a all the cells empty and a random cell with a value from the possible initial values.
     '''
-    initial_board = []
-    for i in range(ROWS):
-        initial_board.append([])
-        for j in range(COLUMNS):
-            initial_board[i].append(EMPTY)
+    initial_board = [[EMPTY for j in range(COLUMNS)] for i in range(ROWS)]
     initial_row, initial_column = get_random_empty_cell(initial_board)
     initial_board[initial_row][initial_column] = random.choice(POSSIBLE_INITIAL_VALUES)
     return initial_board
@@ -69,20 +65,23 @@ def lost_game(board):
     
 
 def invert_board(board):
-    inverted_board = [list(reversed(row)) for row in board]
-    return inverted_board
-
+    '''
+    Inverts the rows of the board.
+    '''
+    return [list(reversed(row)) for row in board]
 
 def transpose_board(board):
-    transposed_board = [[row[i] for row in board] for i in range(len(board[0]))]
+    '''
+    Transposes the rows and columns of the board.
+    '''
+    transposed_board = [[row[i] for row in board] for i in range(COLUMNS)]
     return transposed_board
 
-
-
-
-
-
 def combine_line(line):
+    '''
+    Combines the numbers of a line that can be combined and moves them to the left.
+    If there are no combinable numbers, returns the original line.
+    '''
     combinable_numbers = [number for number in line if number != EMPTY]
     if not combinable_numbers:
         return line
@@ -101,7 +100,6 @@ def combine_line(line):
     result += [EMPTY] * empty_cells_to_add
     return result
 
-
 def move_left(board):
     '''
     Moves the board to the left, combining the numbers that can be combined and moving them to the left.
@@ -110,8 +108,6 @@ def move_left(board):
     for i in range(ROWS):
         moved_board[i] = combine_line(moved_board[i])
     return moved_board
-
-
 
 def move_up(board):
     '''
@@ -148,19 +144,12 @@ def update_game(board, direction):
     elif direction == RIGHT:
         return move_right(board)
 
-
-
 def get_random_empty_cell(board):
     '''
     Returns a random empty cell from the board. If there are no empty cells, returns False.
     '''
     empty_cells = [(i, j) for i in range(ROWS) for j in range(COLUMNS) if board[i][j] == EMPTY]
     return random.choice(empty_cells) if empty_cells else False
-
-
-
-
-
 
 def insert_random_new_cell(board):
     '''
