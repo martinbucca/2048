@@ -34,32 +34,50 @@ def show_ui(board):
 
 
 def no_vertical_moves(board):
-    return no_horizontal_moves(transpose_board(board))
+    '''
+    return True if there are vertical moves possible, False otherwise.
+    '''
+    return possible_horizontal_moves(transpose_board(board))
 
-def no_horizontal_moves(board):
+def possible_horizontal_moves(board):
+    '''
+    Returns True if there are horizontal moves possible, False otherwise.
+    '''
     for i in range(ROWS):
-        for j in range(1, COLUMNS):
-            if board[i][j - 1] == board[i][j]:
-                return False
-    return True
+        if possible_moves_in_row(board[i]):
+            return True
+    return False
+
+def possible_moves_in_row(row):
+    '''
+    Returns True if there are possible moves in the row, False otherwise.
+    '''
+    i = 0
+    while i < len(row):
+        if row[i] == EMPTY:
+            return True
+        if i < len(row) - 1 and row[i] == row[i + 1]:
+            return True
+        i += 1
+    return False
 
 
 
 def game_won(board):
+    '''
+    Returns True if the game is won, False otherwise.
+    '''
     for i in range(ROWS):
-        for j in range(COLUMNS):
-            if board[i][j] == WIN_NUMBER:
-                return True
+        if WIN_NUMBER in board[i]:
+            return True
     return False
 
 
 def lost_game(board):
-    occupied_cells = 0
-    for i in range(ROWS):
-        for j in range(COLUMNS):
-            if board[i][j]:
-                occupied_cells += 1
-    if occupied_cells == ROWS * COLUMNS and no_horizontal_moves(board) and no_vertical_moves(board):
+    '''
+    Returns True if the game is lost, False otherwise.
+    '''
+    if not possible_horizontal_moves(board) and not possible_horizontal_moves(transpose_board(board)):
         return True
     return False
     

@@ -25,6 +25,12 @@ def main():
     gamelib.draw_rectangle(0, 0, 800, 500, fill="white")
     board = logic.initialize_2048()
     while gamelib.is_alive():
+        if logic.won_game(board):
+            gamelib.say("You won!")
+            break
+        if logic.lost_game(board):
+            gamelib.say("You lost!")
+            break
         logic.show_ui(board)
         ev = gamelib.wait(gamelib.EventType.KeyPress)
         if not ev:
@@ -34,6 +40,4 @@ def main():
             board = logic.insert_random_new_cell(updated_board)
 
         
-
-    
 gamelib.init(main)
