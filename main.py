@@ -29,9 +29,7 @@ def main():
         ev = gamelib.wait(gamelib.EventType.KeyPress)
         if not ev:
             break
-        print(board)
         updated_board = logic.update_game(board, ev.key)
-        print(updated_board)
         if updated_board != board:
             board = logic.insert_random_new_cell(updated_board)
 

@@ -139,6 +139,9 @@ def update_game(board, direction):
 
 
 def get_random_empty_cell(board):
+    '''
+    Returns a random empty cell from the board. If there are no empty cells, returns False.
+    '''
     empty_cells = [(i, j) for i in range(ROWS) for j in range(COLUMNS) if board[i][j] == EMPTY]
     return random.choice(empty_cells) if empty_cells else False
 
@@ -148,10 +151,9 @@ def get_random_empty_cell(board):
 
 
 def insert_random_new_cell(board):
-    copy_board = board.copy()
     row, column = (get_random_empty_cell(board))
-    copy_board[row][column] = random.choice(POSSIBLE_INITIAL_VALUES)
-    return copy_board
+    board[row][column] = random.choice(POSSIBLE_INITIAL_VALUES)
+    return board
 
 
 
