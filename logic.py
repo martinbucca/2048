@@ -1,12 +1,20 @@
+"""
+This module contains the logic of the game.
+"""
+
 import random
-import gamelib as gamelib
+import gamelib
 from constants import *
 
 
 class Game:
+    '''
+    This class represents the game. It contains the game board and the game score.
+    '''
     def __init__(self):
         """
-        Initializes the game board with a all the cells empty and a random cell with a value from the possible initial values.
+        Initializes the game board with a all the cells empty and a random cell 
+        with a value from the possible initial values.
         """
         self.board = [[EMPTY for j in range(COLUMNS)] for i in range(ROWS)]
         self.insert_random_new_cell()
@@ -28,32 +36,32 @@ class Game:
         gamelib.draw_text(
             str(self.score), SCORE_POSITION[0], SCORE_POSITION[1], size=30, fill="white"
         )
-        for i in range(len(self.board)):
-            for j in range(len(self.board)):
-                x1, y1 = (
-                    BOARD_X_MARGIN + j * CELL_SIZE + 3 * j,
-                    BOARD_Y_MARGIN + i * CELL_SIZE + 3 * i,
+        for i, row in enumerate(self.board):
+            for j, value in enumerate(row):
+                x_1, y_1 = (
+                    BOARD_X_MARGIN + j * CELL_SIZE + CELL_PADDING * j,
+                    BOARD_Y_MARGIN + i * CELL_SIZE + CELL_PADDING * i,
                 )
-                x2, y2 = x1 + CELL_SIZE, y1 + CELL_SIZE
-                value = self.board[i][j]
+                x_2, y_2 = x_1 + CELL_SIZE, y_1 + CELL_SIZE
                 gamelib.draw_rectangle(
-                    x1,
-                    y1,
-                    x2,
-                    y2,
+                    x_1,
+                    y_1,
+                    x_2,
+                    y_2,
                     fill=COLORS.get(value, DEFAULT_CELL_COLOR),
                     outline=COLORS.get(value, DEFAULT_CELL_COLOR),
                 )
                 if value != EMPTY:
                     gamelib.draw_text(
                         str(value),
-                        (x1 + x2) / 2,
-                        (y1 + y2) / 2,
+                        (x_1 + x_2) / 2,
+                        (y_1 + y_2) / 2,
                         fill=NUMBERS_COLOR,
                         bold=True,
                         size=20,
                         font="Helvetica",
                     )
+
 
     def get_random_empty_cell(self):
         """
@@ -69,14 +77,16 @@ class Game:
 
     def insert_random_new_cell(self):
         """
-        Inserts a new cell with a value from the possible initial values in a random empty cell of the board.
+        Inserts a new cell with a value from the possible initial values 
+        in a random empty cell of the board.
         """
         row, column = self.get_random_empty_cell()
         self.board[row][column] = random.choice(POSSIBLE_INITIAL_VALUES)
 
     def move_left(self):
         """
-        Moves the board to the left, combining the numbers that can be combined and moving them to the left.
+        Moves the board to the left, combining the numbers that can be combined 
+        and moving them to the left.
         """
         changed = False
         for row in range(ROWS):
@@ -113,7 +123,8 @@ class Game:
 
     def move_right(self):
         """
-        Moves the board to the right, combining the numbers that can be combined and moving them to the right.
+        Moves the board to the right, combining the numbers that can 
+        be combined and moving them to the right.
         """
         self.invert_board()
         changed = self.move_left()
@@ -134,7 +145,8 @@ class Game:
 
     def move_up(self):
         """
-        Moves the board to the up, combining the numbers that can be combined and moving them to the up.
+        Moves the board to the up, combining the numbers that 
+        can be combined and moving them to the up.
         """
         self.transpose_board()
         changed = self.move_left()
@@ -143,7 +155,8 @@ class Game:
 
     def move_down(self):
         """
-        Moves the board to the down, combining the numbers that can be combined and moving them to the down.
+        Moves the board to the down, combining the numbers that can be 
+        combined and moving them to the down.
         """
         self.transpose_board()
         changed = self.move_right()
@@ -151,7 +164,10 @@ class Game:
         return changed
 
     def update(self, direction):
-        """Updates the game according to the specified movement in the desired direction to move the board."""
+        """
+        Updates the game according to the specified movement in 
+        the desired direction to move the board.
+        """
         changed = False
         if direction == UP:
             changed = self.move_up()
@@ -185,7 +201,8 @@ class Game:
         """
         Returns True if there are vertical moves possible, False otherwise.
         """
-        result = self.possible_horizontal_moves(self.transpose_board())
+        self.transpose_board()
+        result = self.possible_horizontal_moves()
         self.transpose_board()
         return result
 
