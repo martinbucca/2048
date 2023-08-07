@@ -7,17 +7,11 @@
   </p>
 </div>
       
-## About The Project
-<div style="display: flex; flex-direction: column;">
-  <div style="display: flex; justify-content: space-between;">
-    <img src="readme_images/chicken.png" alt="Chicken Image" style="width: 300px; height: 400px; margin-right: 10px;">
-    <img src="readme_images/pixeled_chicken.png" alt="Pixeled Chicken Image" style="width: 300px; height: 400px; margin-left: 10px;">
-  </div>
-  <div style="display: flex; justify-content: space-between;">
-    <img src="readme_images/bird.png" alt="Bird Image" style="width: 300px; height: 400px; margin-left: 10px;">
-    <img src="readme_images/pixeled_bird.png" alt="Pixeled Bird Image" style="width: 300px; height: 400px; margin-right: 10px;">
-  </div>
+<div align="center">
+  <img src="2048.png" alt="game image">
 </div>
+
+
 
 ### Overview
 This project is a simple 2048 game implemented in Python using the `gamelib` library, which is based on Tkinter. The aim of the game is to reach 2048 by joining the cells that have the same number.  
