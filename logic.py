@@ -10,6 +10,7 @@ class Game:
         """
         self.board = [[EMPTY for j in range(COLUMNS)] for i in range(ROWS)]
         self.insert_random_new_cell()
+        self.insert_random_new_cell()
         self.score = INITIAL_SCORE
 
     def show(self):

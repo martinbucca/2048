@@ -1,9 +1,14 @@
-import gamelib as gamelib
+"""
+This module contains the main function of the game. It initializes the game and runs the game loop.
+"""
+import gamelib
 from logic import Game
-from constants import UP, DOWN, LEFT, RIGHT, BACKGROUND_COLOR
 
 
 def main():
+    '''
+    Main function. Initializes the game and runs the game loop.
+    '''
     gamelib.resize(600, 600)
     gamelib.title("2048")
     game = Game()
@@ -15,10 +20,10 @@ def main():
             gamelib.say("You lost!")
             break
         game.show()
-        ev = gamelib.wait(gamelib.EventType.KeyPress)
-        if not ev:
+        event = gamelib.wait(gamelib.EventType.KeyPress)
+        if not event:
             break
-        game.update(ev.key)
+        game.update(event.key)
 
 
 gamelib.init(main)

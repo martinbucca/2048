@@ -1,23 +1,30 @@
+"""
+This module contains the constants used in the game.
+"""
+# GRAPHICS CONSTANTS
 SCORE_LABEL_POSITION = (300, 30)
 SCORE_POSITION = (300, 70)
 CELL_SIZE = 100
 BOARD_X_MARGIN = 100
 BOARD_Y_MARGIN = 100
+# GAME CONSTANTS
 WIN_NUMBER = 2048
 INITIAL_SCORE = 0
 POSSIBLE_INITIAL_VALUES = (2, 4)
 ROWS = 4
 COLUMNS = 4
+# DIRECTIONS
 UP = "Up"
 RIGHT = "Right"
 DOWN = "Down"
 LEFT = "Left"
 EMPTY = 0
+# FORMATTING CONSTANTS
 BACKGROUND_COLOR = "#444444"
 DEFAULT_CELL_COLOR = "#bbbbbb"
 NUMBERS_COLOR = "black"
 COLORS = {
-    2: "#fde2e4",  # Rosa claro
+    2: "#fdefe8",  # Rosa claro
     4: "#fad2d7",  # Rosa pálido
     8: "#f59eb1",  # Rosa medio
     16: "#ff6f91",  # Rosa fuerte
