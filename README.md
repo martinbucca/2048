@@ -29,7 +29,7 @@ This project is a simple 2048 game implemented in Python using the `gamelib` lib
 ## Contact
 If you have any questions, feedback, or suggestions regarding the project, feel free to reach out:
 
-* Email: martinbucca02@gmail.com
+* martinbucca02@gmail.com
 * [GitHub](https://github.com/martinbucca)
 * [Linkedin](https://www.linkedin.com/in/mart%C3%ADn-bucca-70858a216/)
   
