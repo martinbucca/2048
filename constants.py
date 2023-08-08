@@ -30,8 +30,8 @@ DEFAULT_CELL_COLOR = "#CCC1B2"
 BOARD_BACKGROUND_COLOR = "#BBAD9E" 
 NUMBERS_COLOR = "black"
 COLORS = {
-    2: "#fdefe8",  # Rosa claro
-    4: "#fad2d7",  # Rosa pálido
+    2: "#fad2d7",  # Rosa pálido
+    4: "#e6aef4",  # Violeta claro
     8: "#f59eb1",  # Rosa medio
     16: "#ff6f91",  # Rosa fuerte
     32: "#f984a1",  # Rosa oscuro
