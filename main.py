@@ -15,15 +15,18 @@ def main():
     while gamelib.is_alive():
         if game.won():
             gamelib.say("You won!")
-            break
+            game.reset()
         if game.lost():
             gamelib.say("You lost!")
-            break
+            game.reset()
         game.show()
-        event = gamelib.wait(gamelib.EventType.KeyPress)
+        event = gamelib.wait()
         if not event:
             break
-        game.update(event.key)
+        if event.type == gamelib.EventType.KeyPress:
+            game.update(event.key)
+        elif event.type == gamelib.EventType.ButtonPress and event.mouse_button == 1 and game.new_game_button_clicked(event.x, event.y):
+            game.reset()
 
 
 gamelib.init(main)

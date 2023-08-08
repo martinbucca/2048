@@ -17,24 +17,43 @@ class Game:
         with a value from the possible initial values.
         """
         self.board = [[EMPTY for j in range(COLUMNS)] for i in range(ROWS)]
+        self.generate_initial_cells()
+        self.score = INITIAL_SCORE
+
+    def generate_initial_cells(self):
+        """
+        Generates the initial cells of the game board.
+        """
         self.insert_random_new_cell()
         self.insert_random_new_cell()
+
+    def reset(self):
+        """
+        Resets the game board with a all the cells empty and a random cell 
+        with a value from the possible initial values.
+        """
+        self.board = [[EMPTY for j in range(COLUMNS)] for i in range(ROWS)]
+        self.generate_initial_cells()
         self.score = INITIAL_SCORE
 
     def show(self):
         """
         Shows the game board on the screen.
         """
-        gamelib.draw_rectangle(0, 0, 600, 600, fill=BACKGROUND_COLOR)
+        
+        gamelib.draw_rectangle(0, 0, WINDOW_SIZE[0], WINDOW_SIZE[1], fill=BACKGROUND_COLOR, outline=BACKGROUND_COLOR)
+        gamelib.draw_rectangle(BOARD_X_MARGIN - CELL_PADDING, BOARD_Y_MARGIN - CELL_PADDING, BOARD_X_MARGIN + CELL_SIZE * ROWS + CELL_PADDING * (ROWS - 1) + CELL_PADDING, BOARD_Y_MARGIN + CELL_SIZE * COLUMNS + CELL_PADDING * (COLUMNS - 1) + CELL_PADDING, fill=BOARD_BACKGROUND_COLOR, outline=BOARD_BACKGROUND_COLOR)
+        gamelib.draw_rectangle(NEW_GAME_BUTTON[0], NEW_GAME_BUTTON[1], NEW_GAME_BUTTON[2], NEW_GAME_BUTTON[3], fill=NEW_GAME_BUTTON_COLOR, activeoutline='black', activewidth=2, outline='black')
+        gamelib.draw_text("New Game", (NEW_GAME_BUTTON[0] + NEW_GAME_BUTTON[2]) / 2, (NEW_GAME_BUTTON[1] + NEW_GAME_BUTTON[3]) / 2, size=14, fill="white", font="Helvetica")
         gamelib.draw_text(
             "Score",
             SCORE_LABEL_POSITION[0],
             SCORE_LABEL_POSITION[1],
             size=30,
-            fill="white",
+            fill="black",
         )
         gamelib.draw_text(
-            str(self.score), SCORE_POSITION[0], SCORE_POSITION[1], size=30, fill="white"
+            str(self.score), SCORE_POSITION[0], SCORE_POSITION[1], size=30, fill="black"
         )
         for i, row in enumerate(self.board):
             for j, value in enumerate(row):
@@ -61,7 +80,11 @@ class Game:
                         size=20,
                         font="Helvetica",
                     )
-
+    def new_game_button_clicked(self, x, y):
+        """
+        Returns True if the new game button was clicked, False otherwise.
+        """
+        return NEW_GAME_BUTTON[0] <= x <= NEW_GAME_BUTTON[2] and NEW_GAME_BUTTON[1] <= y <= NEW_GAME_BUTTON[3]
 
     def get_random_empty_cell(self):
         """
