@@ -4,6 +4,7 @@ This module contains the logic of the game.
 
 import random
 import gamelib
+import json
 from constants import *
 
 
@@ -20,6 +21,7 @@ class Game:
         self.board = [[EMPTY for j in range(COLUMNS)] for i in range(ROWS)]
         self.generate_initial_cells()
         self.score = INITIAL_SCORE
+        self.best = get_best_score()
 
     def generate_initial_cells(self):
         """
@@ -33,10 +35,17 @@ class Game:
         Resets the game board with a all the cells empty and a random cell
         with a value from the possible initial values.
         """
+        self.store_best_score()
         self.board = [[EMPTY for j in range(COLUMNS)] for i in range(ROWS)]
         self.generate_initial_cells()
         self.score = INITIAL_SCORE
-
+        self.best = get_best_score()
+    def store_best_score(self):
+        """
+        Stores the best score in the file.
+        """
+        with open("best_score.json", "w") as file:
+            json.dump({"best_score": self.best}, file)
     def show(self):
         """
         Shows the game board on the screen.
@@ -135,7 +144,7 @@ class Game:
             font="Helvetica",
         )
         gamelib.draw_text(
-            str(self.score),
+            str(self.best),
             (
                 BOARD_X_MARGIN
                 + CELL_SIZE
@@ -151,9 +160,6 @@ class Game:
             font="Helvetica",
         )
         
-        # gamelib.draw_text(
-        #    str(self.score), SCORE_POSITION[0], SCORE_POSITION[1], size=30, fill="black"
-        # )
         for i, row in enumerate(self.board):
             for j, value in enumerate(row):
                 x_1, y_1 = (
@@ -237,6 +243,8 @@ class Game:
                 ):
                     result.append(combinable_numbers[i] * 2)
                     self.score += combinable_numbers[i] * 2
+                    if self.score > self.best:
+                        self.best = self.score
                     i += 2
                 else:
                     result.append(combinable_numbers[i])
@@ -353,3 +361,15 @@ class Game:
                 return True
             i += 1
         return False
+
+
+def get_best_score():
+    """
+    Returns the best score stored in the file.
+    """
+    try:
+        with open("best_score.json", "r") as file:
+            data = json.load(file)
+            return data.get("best_score", 0)
+    except FileNotFoundError:
+        return 0

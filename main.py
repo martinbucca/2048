@@ -22,6 +22,7 @@ def main():
         game.show()
         event = gamelib.wait()
         if not event:
+            game.store_best_score()
             break
         if event.type == gamelib.EventType.KeyPress:
             game.update(event.key)
