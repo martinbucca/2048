@@ -3,14 +3,14 @@ This module contains the logic of the game.
 """
 
 import random
-import gamelib
 import json
+import gamelib
 from constants import *
 
 
 class Game:
     """
-    This class represents the game. It contains the game board and the game score.
+    This class represents the game. It contains the game board and the game score and best score.
     """
 
     def __init__(self):
@@ -40,159 +40,30 @@ class Game:
         self.generate_initial_cells()
         self.score = INITIAL_SCORE
         self.best = get_best_score()
+
     def store_best_score(self):
         """
         Stores the best score in the file.
         """
-        with open("best_score.json", "w") as file:
+        with open("best_score.json", "w", encoding="utf-8") as file:
             json.dump({"best_score": self.best}, file)
+
     def show(self):
         """
         Shows the game board on the screen.
         """
-        # Background
-        gamelib.draw_rectangle(
-            0,
-            0,
-            WINDOW_SIZE[0],
-            WINDOW_SIZE[1],
-            fill=BACKGROUND_COLOR,
-            outline=BACKGROUND_COLOR,
-        )
-        # Board background
-        gamelib.draw_rectangle(
-            BOARD_X_MARGIN - CELL_PADDING,
-            BOARD_Y_MARGIN - CELL_PADDING,
-            BOARD_X_MARGIN
-            + CELL_SIZE * ROWS
-            + CELL_PADDING * (ROWS - 1)
-            + CELL_PADDING,
-            BOARD_Y_MARGIN
-            + CELL_SIZE * COLUMNS
-            + CELL_PADDING * (COLUMNS - 1)
-            + CELL_PADDING,
-            fill=BOARD_BACKGROUND_COLOR,
-            outline=BOARD_BACKGROUND_COLOR,
-        )
-        # New game button
-        gamelib.draw_rectangle(
-            NEW_GAME_BUTTON[0],
-            NEW_GAME_BUTTON[1],
-            NEW_GAME_BUTTON[2],
-            NEW_GAME_BUTTON[3],
-            fill=NEW_GAME_BUTTON_COLOR,
-            activeoutline="black",
-            activewidth=2,
-            outline="black",
-        )
-        gamelib.draw_text(
-            "New Game",
-            (NEW_GAME_BUTTON[0] + NEW_GAME_BUTTON[2]) / 2,
-            (NEW_GAME_BUTTON[1] + NEW_GAME_BUTTON[3]) / 2,
-            size=14,
-            fill="white",
-            font="Helvetica",
-        )
-        # Score
-        gamelib.draw_rectangle(
-            BOARD_X_MARGIN - CELL_PADDING,
-            50,
-            BOARD_X_MARGIN + CELL_SIZE,
-            105,
-            fill="#8F7A66",
-            outline="#8F7A66",
-        )
-        gamelib.draw_text(
-            "SCORE",
-            (BOARD_X_MARGIN - CELL_PADDING + BOARD_X_MARGIN + CELL_SIZE) / 2,
-            65,
-            size=14,
-            fill="white",
-            font="Helvetica",
-        )
-        gamelib.draw_text(
-            str(self.score),
-            (BOARD_X_MARGIN - CELL_PADDING + BOARD_X_MARGIN + CELL_SIZE) / 2,
-            90,
-            size=16,
-            fill="white",
-            font="Helvetica",
-        )
-        # Best
-        gamelib.draw_rectangle(
-            BOARD_X_MARGIN + CELL_SIZE + CELL_PADDING,
-            50,
-            BOARD_X_MARGIN + 2 * CELL_SIZE + CELL_PADDING,
-            105,
-            fill="#8F7A66",
-            outline="#8F7A66",
-        )
-        gamelib.draw_text(
-            "BEST",
-            (
-                BOARD_X_MARGIN
-                + CELL_SIZE
-                + CELL_PADDING
-                + BOARD_X_MARGIN
-                + 2 * CELL_SIZE
-                + CELL_PADDING
-            )
-            / 2,
-            65,
-            size=14,
-            fill="white",
-            font="Helvetica",
-        )
-        gamelib.draw_text(
-            str(self.best),
-            (
-                BOARD_X_MARGIN
-                + CELL_SIZE
-                + CELL_PADDING
-                + BOARD_X_MARGIN
-                + 2 * CELL_SIZE
-                + CELL_PADDING
-            )
-            / 2,
-            90,
-            size=16,
-            fill="white",
-            font="Helvetica",
-        )
-        
-        for i, row in enumerate(self.board):
-            for j, value in enumerate(row):
-                x_1, y_1 = (
-                    BOARD_X_MARGIN + j * CELL_SIZE + CELL_PADDING * j,
-                    BOARD_Y_MARGIN + i * CELL_SIZE + CELL_PADDING * i,
-                )
-                x_2, y_2 = x_1 + CELL_SIZE, y_1 + CELL_SIZE
-                gamelib.draw_rectangle(
-                    x_1,
-                    y_1,
-                    x_2,
-                    y_2,
-                    fill=COLORS.get(value, DEFAULT_CELL_COLOR),
-                    outline=COLORS.get(value, DEFAULT_CELL_COLOR),
-                )
-                if value != EMPTY:
-                    gamelib.draw_text(
-                        str(value),
-                        (x_1 + x_2) / 2,
-                        (y_1 + y_2) / 2,
-                        fill=NUMBERS_COLOR,
-                        bold=True,
-                        size=20,
-                        font="Helvetica",
-                    )
+        draw_background()
+        draw_new_game_button()
+        draw_score(self.score, self.best)
+        draw_board(self.board)
 
-    def new_game_button_clicked(self, x, y):
+    def new_game_button_clicked(self, x_pos, y_pos):
         """
         Returns True if the new game button was clicked, False otherwise.
         """
         return (
-            NEW_GAME_BUTTON[0] <= x <= NEW_GAME_BUTTON[2]
-            and NEW_GAME_BUTTON[1] <= y <= NEW_GAME_BUTTON[3]
+            NEW_GAME_BUTTON[0] <= x_pos <= NEW_GAME_BUTTON[2]
+            and NEW_GAME_BUTTON[1] <= y_pos <= NEW_GAME_BUTTON[3]
         )
 
     def get_random_empty_cell(self):
@@ -214,17 +85,6 @@ class Game:
         """
         row, column = self.get_random_empty_cell()
         self.board[row][column] = random.choice(POSSIBLE_INITIAL_VALUES)
-
-    def move_left(self):
-        """
-        Moves the board to the left, combining the numbers that can be combined
-        and moving them to the left.
-        """
-        changed = False
-        for row in range(ROWS):
-            if self.combine_row(row):
-                changed = True
-        return changed
 
     def combine_row(self, row_index):
         """
@@ -255,6 +115,36 @@ class Game:
             return result != row
         return False
 
+    def update(self, direction):
+        """
+        Updates the game according to the specified movement in
+        the desired direction to move the board. If the movement
+        is possible, inserts a new cell with a value from the
+        possible initial values in a random empty cell of the board.
+        """
+        changed = False
+        if direction == UP:
+            changed = self.move_up()
+        elif direction == DOWN:
+            changed = self.move_down()
+        elif direction == LEFT:
+            changed = self.move_left()
+        elif direction == RIGHT:
+            changed = self.move_right()
+        if changed:
+            self.insert_random_new_cell()
+
+    def move_left(self):
+        """
+        Moves the board to the left, combining the numbers that can be combined
+        and moving them to the left.
+        """
+        changed = False
+        for row in range(ROWS):
+            if self.combine_row(row):
+                changed = True
+        return changed
+
     def move_right(self):
         """
         Moves the board to the right, combining the numbers that can
@@ -264,18 +154,6 @@ class Game:
         changed = self.move_left()
         self.invert_board()
         return changed
-
-    def invert_board(self):
-        """
-        Inverts the rows of the board.
-        """
-        self.board = [list(reversed(row)) for row in self.board]
-
-    def transpose_board(self):
-        """
-        Transposes the rows and columns of the board.
-        """
-        self.board = [[row[i] for row in self.board] for i in range(COLUMNS)]
 
     def move_up(self):
         """
@@ -297,22 +175,17 @@ class Game:
         self.transpose_board()
         return changed
 
-    def update(self, direction):
+    def invert_board(self):
         """
-        Updates the game according to the specified movement in
-        the desired direction to move the board.
+        Inverts the rows of the board.
         """
-        changed = False
-        if direction == UP:
-            changed = self.move_up()
-        elif direction == DOWN:
-            changed = self.move_down()
-        elif direction == LEFT:
-            changed = self.move_left()
-        elif direction == RIGHT:
-            changed = self.move_right()
-        if changed:
-            self.insert_random_new_cell()
+        self.board = [list(reversed(row)) for row in self.board]
+
+    def transpose_board(self):
+        """
+        Transposes the rows and columns of the board.
+        """
+        self.board = [[row[i] for row in self.board] for i in range(COLUMNS)]
 
     def won(self):
         """
@@ -368,8 +241,127 @@ def get_best_score():
     Returns the best score stored in the file.
     """
     try:
-        with open("best_score.json", "r") as file:
+        with open("best_score.json", "r", encoding="utf-8") as file:
             data = json.load(file)
             return data.get("best_score", 0)
     except FileNotFoundError:
         return 0
+
+
+def draw_background():
+    """
+    Draw the background and board background.
+    """
+    gamelib.draw_rectangle(
+        0,
+        0,
+        WINDOW_SIZE[0],
+        WINDOW_SIZE[1],
+        fill=BACKGROUND_COLOR,
+        outline=BACKGROUND_COLOR,
+    )
+
+    gamelib.draw_rectangle(
+        BOARD_X_MARGIN - CELL_PADDING,
+        BOARD_Y_MARGIN - CELL_PADDING,
+        BOARD_X_MARGIN + CELL_SIZE * ROWS + CELL_PADDING * (ROWS - 1) + CELL_PADDING,
+        BOARD_Y_MARGIN
+        + CELL_SIZE * COLUMNS
+        + CELL_PADDING * (COLUMNS - 1)
+        + CELL_PADDING,
+        fill=BOARD_BACKGROUND_COLOR,
+        outline=BOARD_BACKGROUND_COLOR,
+    )
+
+
+def draw_new_game_button():
+    """
+    Draw the new game button.
+    """
+    gamelib.draw_rectangle(
+        NEW_GAME_BUTTON[0],
+        NEW_GAME_BUTTON[1],
+        NEW_GAME_BUTTON[2],
+        NEW_GAME_BUTTON[3],
+        fill=NEW_GAME_BUTTON_COLOR,
+        activeoutline="black",
+        activewidth=2,
+        outline="black",
+    )
+    gamelib.draw_text(
+        "New Game",
+        (NEW_GAME_BUTTON[0] + NEW_GAME_BUTTON[2]) / 2,
+        (NEW_GAME_BUTTON[1] + NEW_GAME_BUTTON[3]) / 2,
+        size=14,
+        fill="white",
+        font="Helvetica",
+    )
+
+
+def draw_score_section(title, value, x_position):
+    """
+    Draw the score section.
+    """
+    gamelib.draw_rectangle(
+        x_position,
+        Y_SCORE_POSITION[0],
+        x_position + CELL_SIZE,
+        Y_SCORE_POSITION[1],
+        fill=NEW_GAME_BUTTON_COLOR,
+        outline=NEW_GAME_BUTTON_COLOR,
+    )
+    gamelib.draw_text(
+        title,
+        (x_position + x_position + CELL_SIZE) / 2,
+        Y_SCORE_POSITION[0] + TEXT_PADDING,
+        size=14,
+        fill="white",
+        font="Helvetica",
+    )
+    gamelib.draw_text(
+        str(value),
+        (x_position + x_position + CELL_SIZE) / 2,
+        Y_SCORE_POSITION[1] - TEXT_PADDING,
+        size=16,
+        fill="white",
+        font="Helvetica",
+    )
+
+
+def draw_score(score, best):
+    """
+    Draw the score and best sections.
+    """
+    draw_score_section("SCORE", score, BOARD_X_MARGIN - CELL_PADDING)
+    draw_score_section("BEST", best, BOARD_X_MARGIN + CELL_SIZE + CELL_PADDING)
+
+
+def draw_board(board):
+    """
+    Draw the game board.
+    """
+    for i, row in enumerate(board):
+        for j, value in enumerate(row):
+            x_1, y_1 = (
+                BOARD_X_MARGIN + j * CELL_SIZE + CELL_PADDING * j,
+                BOARD_Y_MARGIN + i * CELL_SIZE + CELL_PADDING * i,
+            )
+            x_2, y_2 = x_1 + CELL_SIZE, y_1 + CELL_SIZE
+            gamelib.draw_rectangle(
+                x_1,
+                y_1,
+                x_2,
+                y_2,
+                fill=COLORS.get(value, DEFAULT_CELL_COLOR),
+                outline=COLORS.get(value, DEFAULT_CELL_COLOR),
+            )
+            if value != EMPTY:
+                gamelib.draw_text(
+                    str(value),
+                    (x_1 + x_2) / 2,
+                    (y_1 + y_2) / 2,
+                    fill=NUMBERS_COLOR,
+                    bold=True,
+                    size=20,
+                    font="Helvetica",
+                )
