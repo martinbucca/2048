@@ -18,6 +18,7 @@ def main():
             message = "You won!" if game.won() else "You lost!"
             gamelib.say(message)
             game.reset()
+            continue
         event = gamelib.wait()
         if not event:
             game.store_best_score()
