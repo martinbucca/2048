@@ -2,7 +2,7 @@
 This module contains the main function of the game. It initializes the game and runs the game loop.
 """
 import gamelib
-from logic import Game
+from logic import Game, draw_background, draw_new_game_button
 
 
 def main():
@@ -11,6 +11,8 @@ def main():
     """
     gamelib.resize(600, 600)
     gamelib.title("2048")
+    draw_background()
+    draw_new_game_button()
     game = Game()
     while gamelib.is_alive():
         game.show()

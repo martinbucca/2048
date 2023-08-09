@@ -52,8 +52,6 @@ class Game:
         """
         Shows the game board on the screen.
         """
-        draw_background()
-        draw_new_game_button()
         draw_score(self.score, self.best)
         draw_board(self.board)
 
