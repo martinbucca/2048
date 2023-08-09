@@ -45,7 +45,7 @@ class Game:
         """
         Stores the best score in the file.
         """
-        with open("best_score.json", "w", encoding="utf-8") as file:
+        with open("utils/best_score.json", "w", encoding="utf-8") as file:
             json.dump({"best_score": self.best}, file)
 
     def show(self):
@@ -241,7 +241,7 @@ def get_best_score():
     Returns the best score stored in the file.
     """
     try:
-        with open("best_score.json", "r", encoding="utf-8") as file:
+        with open("utils/best_score.json", "r", encoding="utf-8") as file:
             data = json.load(file)
             return data.get("best_score", 0)
     except FileNotFoundError:

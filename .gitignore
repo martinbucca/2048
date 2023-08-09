@@ -1,3 +1,3 @@
 __pycache__/
 .DS_Store
-best_score.json
+utils/best_score.json
