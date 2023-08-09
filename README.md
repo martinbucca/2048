@@ -8,13 +8,16 @@
 </div>
       
 <div align="center">
-  <img src="2048.png" alt="game image">
+  <img src="utils/2048.png" alt="game image">
 </div>
 
 
 
 ### Overview
 This project is a simple 2048 game implemented in Python using the `gamelib` library, which is based on Tkinter. The aim of the game is to reach 2048 by joining the cells that have the same number.  
+### Features
+* `New game` button allows to reset game
+* `best` shows the best score from the first time the game was played.
 ## Prerequisites
 * **Python 3**: Before running this application, please ensure that you have Python installed on your computer. You can download the latest stable version of Python from the official website: https://www.python.org/downloads/
 * **Note**: This application utilizes the [gamelib](https://dessaya.github.io/python-gamelib/) library, which is already included in the code. You don't need to install any external dependencies separately.
